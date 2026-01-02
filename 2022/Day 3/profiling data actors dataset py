@@ -1,0 +1,32 @@
+import pandas as pd
+import numpy as np
+from ydata_profiling import ProfileReport
+
+# Load the CSV file into a pandas DataFrame
+# A DataFrame is like a table/spreadsheet in Python
+df = pd.read_csv(r"G:\My Drive\03 Personal Projects\Python\Python Charmers\Day 3\actorfilms.csv")
+
+# ProfileReport will build a comprehensive report of the dataset and write it as an HTML file
+# This creates an interactive report with statistics, charts, and insights about the data
+profile = ProfileReport(df, title="Pandas Profiling Report", explorative=True)
+profile.to_file(r"G:\My Drive\03 Personal Projects\Python\Python Charmers\Day 3\actor_report.html")
+
+# --- Alternative way to get correlations (since .description_set.keys() doesn't work in this version) ---
+
+# Select only the numeric columns from the dataframe
+# Correlations only work with numbers, not text or categories
+numeric_df = df.select_dtypes(include=[np.number])
+
+# Calculate correlations between all numeric columns
+# Correlation measures how strongly two variables are related (-1 to +1)
+# +1 = perfect positive relationship, -1 = perfect negative relationship, 0 = no relationship
+auto_correlations = numeric_df.corr()
+
+# Print the correlation matrix to the console
+print("Correlations:")
+print(auto_correlations)
+
+# Save the correlation data to a CSV file
+auto_correlations.to_csv(r"G:\My Drive\03 Personal Projects\Python\Python Charmers\Day 3\actor_auto_correlations.csv")
+
+print("Correlation CSV saved")
