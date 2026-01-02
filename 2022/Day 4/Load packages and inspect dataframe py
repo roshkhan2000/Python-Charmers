@@ -1,0 +1,22 @@
+import pandas as pd
+import numpy as np
+from datetime import datetime
+
+# Load csv
+df = pd.read_csv('data\\PD2021_Wk2_Input_Bike_Model_Sales.csv')
+
+# see a snapshot of the dataframe
+print(df.head())
+
+# see summary info
+print(df.info())
+
+# see a the distribution of numerical variables
+print(df.describe())
+
+# see a list of the columns 
+print(df.columns)
+
+# see data in 1 or multiple columns
+print(df['Order Date'])
+print(df[['Model','Bike Type']])
