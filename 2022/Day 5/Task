@@ -1,0 +1,41 @@
+import requests
+import pandas as pd
+
+# The API endpoint URL
+url = "https://public.tableau.com/public/apis/bff/v1/search/query-workbooks"
+
+# Search parameters - what we want to find
+params = {
+    "query": "Tableau",      # Search term
+    "start": 0,           # Start from first result
+    "count": 50           # Get 20 results
+}
+
+# Make the API request
+response = requests.get(url, params=params)
+
+# Get the data as JSON
+data = response.json()
+
+# Convert the entire results to a flattened dataframe
+# pd.json_normalize automatically flattens nested structures
+# and creates column names like 'workbook.name', 'workbook.author.name', etc.
+search_results = pd.json_normalize(data['results'])
+
+# Display all available columns so you know what data you have
+print("Available columns in the dataset:")
+print(search_results.columns.tolist())
+print("\n")
+
+# Display basic information about the dataframe
+print(f"Total results found: {len(search_results)} workbooks")
+print(f"Total columns: {len(search_results.columns)}")
+print("\n")
+
+# Display the first few rows to see the data
+print("First 5 search results:")
+print(search_results.head())
+print("\n")
+
+# Save locally
+search_results.to_csv(r"G:\My Drive\03 Personal Projects\Python\Python Charmers\Day 5\task_tableau_public_search_results.csv", index=False)
