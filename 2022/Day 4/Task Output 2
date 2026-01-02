@@ -1,0 +1,30 @@
+# import libraries and modules
+import pandas as pd
+import numpy as np
+from datetime import datetime
+
+# import Preppin' Data 2021 Wk2 Challenge csv
+df = pd.read_csv(r"G:\My Drive\03 Personal Projects\Python\Python Charmers\Day 4\PD2021_Wk2_Input_Bike_Model_Sales.csv")
+
+# clean 'Model' field to extract letters only
+df['Model'] = df['Model'].str.extract(r'([a-zA-Z]+)')
+
+# create Days to Ship from 'Order Date' and 'Shipping Date'
+df['Order Date'] = pd.to_datetime(df['Order Date'], format="%d/%m/%Y")
+df['Shipping Date'] = pd.to_datetime(df['Shipping Date'], format="%d/%m/%Y")
+df['Days To Ship'] = df['Shipping Date'] - df['Order Date']
+
+# create Order Value from 'Quantity' and 'Value per Bike'
+df['Order Value'] = df['Quantity'] * df['Value per Bike']
+
+# aggregate values by 'Model' and 'Store'
+df = df.groupby(
+     ['Model','Store']
+ ).agg(
+     Total_Order_Value = ('Order Value','sum'), 
+     Total_Quantity_Sold = ('Quantity','sum'),
+     Average_Days_To_Ship = ('Days To Ship', 'mean')
+ ).reset_index()
+
+# see results
+print(df)
