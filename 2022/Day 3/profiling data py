@@ -1,0 +1,43 @@
+import pandas as pd
+import numpy as np
+from ydata_profiling import ProfileReport
+
+# Load csv
+df = pd.read_csv(r"G:\My Drive\03 Personal Projects\Python\Python Charmers\Day 3\autos_random_50k_cleaned.csv")
+
+# ProfileReport will build a report of your dataset and write it as a html file
+profile = ProfileReport(df, title="Pandas Profiling Report", explorative=True)
+profile.to_file(r"G:\My Drive\03 Personal Projects\Python\Python Charmers\Day 3\car_report.html")
+
+print("Main report saved successfully!")
+
+print("\n--- Starting A/B Test Comparison ---")
+
+# You can also compare two datasets
+test_df = df.loc[df['ab_test'] == 'test'].copy()
+ctrl_df = df.loc[df['ab_test'] != 'test'].copy()
+
+# Fix the ad_created column type - convert to datetime in both
+if 'ad_created' in test_df.columns:
+    test_df['ad_created'] = pd.to_datetime(test_df['ad_created'], errors='coerce')
+    ctrl_df['ad_created'] = pd.to_datetime(ctrl_df['ad_created'], errors='coerce')
+
+print(f"Test group size: {len(test_df)}")
+print(f"Control group size: {len(ctrl_df)}")
+
+# create a report for both test and control data
+print("Creating test report...")
+test_report = ProfileReport(test_df, title="AB Test Group", minimal=True)
+
+print("Creating control report...")
+ctrl_report = ProfileReport(ctrl_df, title="AB Control Group", minimal=True)
+
+# create a comparison report and write to html
+print("Generating comparison report...")
+try:
+    comparison_report = ctrl_report.compare(test_report)
+    print("Saving comparison report to file...")
+    comparison_report.to_file(r"G:\My Drive\03 Personal Projects\Python\Python Charmers\Day 3\comparison.html")
+    print("✓ Comparison report saved successfully!")
+except Exception as e:
+    print(f"Error generating comparison: {e}")
