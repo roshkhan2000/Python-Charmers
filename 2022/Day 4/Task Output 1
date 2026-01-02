@@ -1,0 +1,21 @@
+# import libraries and modules
+import pandas as pd
+import numpy as np
+from datetime import datetime
+
+# import Preppin' Data 2021 Wk2 Challenge csv
+df = pd.read_csv(r"G:\My Drive\03 Personal Projects\Python\Python Charmers\Day 4\PD2021_Wk2_Input_Bike_Model_Sales.csv")
+
+# clean 'Model' field to extract letters only
+df['Model'] = df['Model'].str.extract(r'([a-zA-Z]+)')
+
+
+# aggregate valu per Bike, Order Value, and Quantity by Brand and Bike Type
+df = df.groupby(
+     ['Model','Bike Type']
+ ).agg(
+     Quantity_Sold = ('Quantity','sum'),
+     Order_Value = ('Value per Bike','sum'),
+     Average_Value_Sold = ('Value per Bike', 'mean')
+ ).reset_index()
+print(df.head())
