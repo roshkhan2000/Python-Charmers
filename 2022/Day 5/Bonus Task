@@ -1,0 +1,25 @@
+import requests
+import pandas as pd
+
+# The API endpoint URL
+url = "https://public.tableau.com/public/apis/bff/discover/v2/vizzes/viz-of-the-day?"
+
+# Search parameters - what we want to find
+params = {
+    "page": "0",      # Start from first result
+    "limit": 12,      # Limit response to 12 (this is the max limit)
+}
+
+# Make the API request
+response = requests.get(url, params=params)
+
+# Get the data as JSON
+data = response.json()
+
+# Convert the entire results to a flattened dataframe
+# pd.json_normalize automatically flattens nested structures
+# and flattens the result 'contents' to different columns
+search_results = pd.json_normalize(data['contents'])
+
+# Save locally
+search_results.to_csv(r"G:\My Drive\03 Personal Projects\Python\Python Charmers\Day 5\bonus_task_VOTD_Dashboards.csv", index=False)
