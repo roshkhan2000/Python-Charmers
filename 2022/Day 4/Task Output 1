@@ -9,13 +9,17 @@ df = pd.read_csv(r"G:\My Drive\03 Personal Projects\Python\Python Charmers\Day 4
 # clean 'Model' field to extract letters only
 df['Model'] = df['Model'].str.extract(r'([a-zA-Z]+)')
 
+# create Order Value from 'Quanity' and 'Value per Bike'
+df['Order Value'] = df['Value per Bike'] * df['Quantity']
 
 # aggregate valu per Bike, Order Value, and Quantity by Brand and Bike Type
 df = df.groupby(
      ['Model','Bike Type']
  ).agg(
      Quantity_Sold = ('Quantity','sum'),
-     Order_Value = ('Value per Bike','sum'),
+     Order_Value = ('Order Value','sum'),
      Average_Value_Sold = ('Value per Bike', 'mean')
  ).reset_index()
-print(df.head())
+
+# print result
+print(df)
