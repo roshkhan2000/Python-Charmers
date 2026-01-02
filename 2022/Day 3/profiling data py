@@ -37,7 +37,7 @@ print("Generating comparison report...")
 try:
     comparison_report = ctrl_report.compare(test_report)
     print("Saving comparison report to file...")
-    comparison_report.to_file(r"G:\My Drive\03 Personal Projects\Python\Python Charmers\Day 3\comparison.html")
+    comparison_report.to_file(r"G:\My Drive\03 Personal Projects\Python\Python Charmers\Day 3\car_comparison.html")
     print("✓ Comparison report saved successfully!")
 except Exception as e:
     print(f"Error generating comparison: {e}")
