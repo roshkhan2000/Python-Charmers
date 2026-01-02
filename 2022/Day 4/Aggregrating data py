@@ -1,0 +1,16 @@
+# single value result
+max_value = df['Value per Bike'].max()
+print(max_value)
+
+# group by one column
+bikes_sold = df.groupby('Bike Type').agg(Quantity_Sold = ('Quantity','sum'))
+print(bikes_sold)
+
+# group by multiple columns and aggregrate multiple columns
+bike_rev = df.groupby(
+     ['Model','Bike Type']
+ ).agg(
+     Quantity_Sold = ('Quantity','sum'),
+     Order_Value = ('Order Value','sum'),
+ ).reset_index()
+print(bike_rev)
