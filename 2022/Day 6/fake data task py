@@ -1,0 +1,40 @@
+# import libraries and modules
+import pandas as pd
+import numpy as np
+from faker import Faker
+
+# stop python from generating random data each time
+Faker.seed(4321)
+
+# object fake is created for us to reference and generate data
+fake = Faker()
+
+# start with making empty lists
+names = []
+start_date = []
+date_of_birth = []
+
+# loop 50 times - each time, generate one value in each list and add it to the list
+# add names
+for a in range(50):
+    if a % 2 == 0:
+        names += [fake.name_female()]
+    else:
+        names += [fake.name_male()]
+# add start dates
+for a in range(50):
+    start_date += [fake.date_between(start_date = "-10y")]
+# add DOB
+for a in range(50):
+    date_of_birth += [fake.date_between(start_date = "-60y", end_date ="-16y")]
+
+# make a dataframe out of the lists with column names
+df = pd.DataFrame(
+    {
+        'name': names,
+        'start_date' : start_date,
+        'date_of_birth' : date_of_birth
+    })
+
+# write result to csv
+df.to_csv('output\\fake_dataset.csv', index=False)
