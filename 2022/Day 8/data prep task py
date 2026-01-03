@@ -1,0 +1,53 @@
+import pandas as pd
+import numpy as np
+import jellyfish
+
+# Input both data sets
+students = pd.read_csv(r"G:\My Drive\03 Personal Projects\Python\Python Charmers\Day 8\students.csv")
+travel = pd.read_csv(r"G:\My Drive\03 Personal Projects\Python\Python Charmers\Day 8\travel.csv")
+
+df = pd.merge(students, travel, how='inner', left_on='id', right_on='Student ID')
+df = df[['Student ID', 'M', 'Tu', 'W', 'Th', 'F']]
+
+pivot = df.melt(id_vars='Student ID', var_name='Weekday', value_name='Travel Mode')
+
+methods = pivot['Travel Mode'].unique()
+methods = sorted(methods)
+print(f"Unique travel methods: {methods}")
+
+# Apply soundex function to travel mode
+pivot['soundex'] = pivot['Travel Mode'].apply(lambda x: jellyfish.soundex(x))
+
+# print unique soundex and travel modes
+methods_w_soundex = pivot[['Travel Mode', 'soundex']].drop_duplicates()
+methods_w_soundex = methods_w_soundex.sort_values(by=['Travel Mode'])
+print("\nTravel modes with soundex:")
+print(methods_w_soundex)
+
+# find the most frequently occurring travel mode per soundex
+travel_map = pivot.groupby(['soundex', 'Travel Mode']).agg(count=('soundex', 'count')).reset_index()
+travel_map['count_max'] = travel_map.groupby(['soundex'])['count'].transform(max)
+
+# filter for most frequently occurring travel mode per soundex
+travel_lookup = travel_map.loc[travel_map['count'] == travel_map['count_max']]
+
+# Manually remove Scoter as equal to max count for correct spelling
+travel_lookup = travel_lookup.loc[travel_lookup['Travel Mode'] != 'Scoter']  # Fixed: use travel_lookup not travel_map
+
+# Check for remaining duplicates
+duplicates = travel_lookup.groupby('soundex').size()
+if (duplicates > 1).any():
+    print("\nWarning: Multiple travel modes with same max count for these soundex values:")
+    print(duplicates[duplicates > 1])
+
+# join pivot and travel_lookup on the column soundex
+df = pd.merge(pivot, travel_lookup, how='inner', on='soundex')  # Simplified: just use 'on'
+
+# reduce the number of columns
+df = df[['Student ID', 'Weekday', 'Travel Mode_x']]
+
+# rename columns
+df = df.rename(columns={'Travel Mode_x': 'Travel Mode'})
+
+# write to csv
+df.to_csv(r"G:\My Drive\03 Personal Projects\Python\Python Charmers\Day 8\joined_output.csv", index=False)
